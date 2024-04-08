@@ -1,8 +1,10 @@
 package edu.iu.habahram.DinerPancakeHouseMerge.controllers;
 
+import edu.iu.habahram.DinerPancakeHouseMerge.model.Customer;
 import edu.iu.habahram.DinerPancakeHouseMerge.model.MenuItem;
 import edu.iu.habahram.DinerPancakeHouseMerge.model.MenuItemRecord;
 import edu.iu.habahram.DinerPancakeHouseMerge.model.SignupRequest;
+import edu.iu.habahram.DinerPancakeHouseMerge.repository.CustomerRepository;
 import edu.iu.habahram.DinerPancakeHouseMerge.repository.MergerRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +18,11 @@ import java.util.List;
 @RequestMapping("/merger")
 public class MergerController {
     MergerRepository mergerRepository;
+    CustomerRepository customerRepository;
 
     public MergerController(MergerRepository mergerRepository) {
         this.mergerRepository = mergerRepository;
+        this.customerRepository = customerRepository;
     }
 
     @GetMapping
@@ -76,15 +80,14 @@ public class MergerController {
     }
 
     @PostMapping("/signup")
-    public void signup(@RequestBody SignupRequest signupRequest) {
-        String username = signupRequest.getUsername();
-        String password = signupRequest.getPassword();
-        String email = signupRequest.getEmail();
 
-        try (FileWriter writer = new FileWriter("data/customers.txt", true)) {
-            writer.write(username + "," + password + "," + email + "\n");
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void signup(@RequestBody Customer customer){
+        try{
+            customerRepository.save(customer);
+
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
         }
     }
 }
